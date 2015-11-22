@@ -1,4 +1,5 @@
 import numpy as np
+import logging
 
 '''
 This module contains the functions needed to classify a list of receipes,
@@ -26,13 +27,13 @@ def createFeatVector(vocabList, ingredientsList):
 		if word in vocabList:
 			featureVec[vocabList.index(word)] = 1;
 		else: 
-			#print "word %s is not in my vocabulary" % word
+			logging.debug("word %s is not in my vocabulary" % word)
 			notFoundTokens.append(word)
 			notFound += 1
 	if notFound > 0:
-		print " Receipe with ingrendients not found in the vocabulary"
-		print "  tokens: %d, notfound: %d" % (len(ingredientsList),notFound)
-		print "  not found: " + str(notFoundTokens)
+		logging.debug(" Receipe with ingrendients not found in the vocabulary")
+		logging.debug("  tokens: %d, notfound: %d" % (len(ingredientsList),notFound))
+		logging.debug("  not found: " + str(notFoundTokens))
 
 	return featureVec, notFound
 
@@ -40,7 +41,7 @@ def trainNB(trainReceipes, vocabulary, classes):
 	''' Bayes: p(c|w) = (p(w|c) * p(c)) / p(w) 
 		This funcion calculates p(w|c) and p(c)
 	'''
-	''' Initialization '''
+	''' Initialization ''' 
 	# initialize numerator with 1 because some probability may be 0
 	numeratorPwc = np.array([[1.0]*len(vocabulary)]*len(classes))
 
@@ -75,22 +76,17 @@ def classifyNB(pc, pwc, ingredFeatVector):
 	return classIndex
 	
 def run(trainReceipes, unkReceipes):
-  	print "### run summary ###" 
-	print ">train dataset size: %d"  %len(trainReceipes)
-	print ">receipes to classify: %d"  %len(unkReceipes)	
 
+	logging.info("creating vocabulary...")
 	vocabulary = createVocabulary(trainReceipes)
-	print "creating vocabulary..."
-	print ">vocabulary size: %d"  %len(vocabulary)
-
-  	classes = createClasses(trainReceipes)
-	print "extracting classes..."
-	print ">number of classes: %d"  %len(classes)
-
-	print "training NB Classifier..."
+	
+  	logging.info("extracting classes...")
+	classes = createClasses(trainReceipes)
+	
+	logging.info("training NB Classifier...")
   	pc, pwc = trainNB(trainReceipes, vocabulary, classes)
   	
-  	print "classifying using NB..."
+  	logging.info("classifying using NB...")
   	classReceipes = {}
   	nfTokens = 0
   	nfTokensReceipes = 0
@@ -100,6 +96,13 @@ def run(trainReceipes, unkReceipes):
   		if nft > 0: nfTokensReceipes += 1
   		classIndex= classifyNB(pc,pwc,featureVector)
   		classReceipes[receipe['id']] = classes[classIndex]
-  	print ">ingrendients not in the vocabulary: %d" % nfTokens
-  	print ">receipes with ingredients not in the vocabulary: %d" % nfTokensReceipes
+
+  	logging.info("### NB run summary ###")
+	logging.info("  train dataset size: %d"  %len(trainReceipes))
+	logging.info("  receipes to classify: %d"  %len(unkReceipes))
+	logging.info("  vocabulary size: %d"  %len(vocabulary))
+	logging.info("  number of classes: %d"  %len(classes))
+  	logging.info("  ingredients not in the vocabulary: %d" % nfTokens)
+  	logging.info("  receipes with ingredients not in the vocabulary: %d" % nfTokensReceipes)
+  	
   	return classReceipes
