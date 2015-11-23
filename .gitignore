@@ -1,3 +1,4 @@
 input/
 output/
 untitled.sublime-workspace
+*.pyc

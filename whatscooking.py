@@ -12,7 +12,7 @@ parser = argparse.ArgumentParser(
     description='Whatscooking Program'
 )
 parser.add_argument("trainRecipesFile", help="train dataset")
-parser.add_argument("unknownRecipesFile", help="unknown receipes dataset")
+parser.add_argument("unknownRecipesFile", help="unknown recipes dataset")
 parser.add_argument("outputFile", help="output csv file")
 parser.add_argument("-v", "--verbose", help="increase output verbosity", action="store_true")
 args = parser.parse_args()
@@ -21,10 +21,10 @@ if args.verbose:
 
 def main(argv):
 	#load json files.
-	with open(args.trainRecipesFile) as train_receipes_file:
-		trainJson = json.load(train_receipes_file)
-	with open(args.unknownRecipesFile) as unknown_receipes_file:
-		unknownJson = json.load(unknown_receipes_file)
+	with open(args.trainRecipesFile) as train_recipes_file:
+		trainJson = json.load(train_recipes_file)
+	with open(args.unknownRecipesFile) as unknown_recipes_file:
+		unknownJson = json.load(unknown_recipes_file)
 
 	results = {}
 

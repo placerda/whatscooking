@@ -14,7 +14,7 @@ args = parser.parse_args()
 if args.verbose:
     logging.basicConfig(level=logging.INFO)
 
-def crossfolding(trainReceipes):
+def crossfolding(trainrecipes):
 	logging.info("### run summary ###")
 	#initialize counters (at least 2)
 	numPartitions = 10
@@ -22,13 +22,13 @@ def crossfolding(trainReceipes):
 	partitionsSize = np.array([0] * numPartitions)
 	
 	#define partitions size
-	if len(trainReceipes) < numPartitions: 
+	if len(trainrecipes) < numPartitions: 
 		logging.error("Train dataset must have more than %d items" % numPartitions)
 		sys.exit(0)
-	partitionsSize += len(trainReceipes) / numPartitions
-	for i in range(len(trainReceipes) % numPartitions):
+	partitionsSize += len(trainrecipes) / numPartitions
+	for i in range(len(trainrecipes) % numPartitions):
 		partitionsSize[i] += 1
-	logging.info(">number of training receipes: %d" % len(trainReceipes))
+	logging.info(">number of training recipes: %d" % len(trainrecipes))
 
 	#calculate accuracy for each partition
 	logging.info("...calculating accuracy for each partition...")
@@ -36,31 +36,31 @@ def crossfolding(trainReceipes):
 	for i in range(numPartitions):
 		logging.info("FOLD %d" % (i+1))
 		#get train and test lists		
-		testList = trainReceipes[partitionIndex:partitionIndex+partitionsSize[i]]
-		trainList = [] * (len(trainReceipes)-len(testList))
-		for nDocument in range(len(trainReceipes)):
+		testList = trainrecipes[partitionIndex:partitionIndex+partitionsSize[i]]
+		trainList = [] * (len(trainrecipes)-len(testList))
+		for nDocument in range(len(trainrecipes)):
 			if (nDocument < partitionIndex) | (nDocument>partitionIndex+partitionsSize[i]):
-				trainList.append(trainReceipes[nDocument])
+				trainList.append(trainrecipes[nDocument])
 		partitionIndex += partitionsSize[i]
 		
 		#classify test list
 		classifiedList = bayes.run(trainList,testList)
-		totalReceipes = 0.0
+		totalrecipes = 0.0
 		truePositives = 0.0
-		for receipe in testList:
-			totalReceipes += 1
-			if classifiedList[receipe['id']] == receipe['cuisine']:
+		for recipe in testList:
+			totalrecipes += 1
+			if classifiedList[recipe['id']] == recipe['cuisine']:
 				truePositives += 1
 		#compare classification to calculate accuracy
-		accuracy[i] = truePositives / totalReceipes
+		accuracy[i] = truePositives / totalrecipes
 	#calculate avg accuracy
 	avgAccuracy = 0.0
 	avgAccuracy = np.average(accuracy)
 	return avgAccuracy
 
 def main(argv):
-	with open(args.trainRecipesFile) as train_receipes_file:
-		trainJson = json.load(train_receipes_file)
+	with open(args.trainRecipesFile) as train_recipes_file:
+		trainJson = json.load(train_recipes_file)
 
 	#does crossfolding validation
 	accuracy = crossfolding (trainJson)
