@@ -38,40 +38,45 @@ def createFeatVector(vocabList, ingredientsList):
 	return featureVec, notFound
 
 def trainNB(trainrecipes, vocabulary, classes):
-	''' Bayes: p(c|w) = (p(w|c) * p(c)) / p(w) 
-		This funcion calculates p(w|c) and p(c)
+	''' Bayes Theorem: p(c|w) = (p(w|c) * p(c)) / p(w) 
+		This funcion calculates priors p(w|c) and p(c) 
+		for each class present in the training data set
 	'''
-	''' Initialization ''' 
-	# initialize numerator with 1 because some probability may be 0
+	
+	''' initialization'''
+	# Laplace smoothing (add 1 numerator) 
 	numeratorPwc = np.array([[1.0]*len(vocabulary)]*len(classes))
-
-	# initialize denominator of each token with the number of 
-	# classes because of the numerator 1 initialization
+	# Laplace smoothing (denominator)
 	denominatorPwc = np.array([len(classes)]*len(vocabulary))
+	# pc (vector)
 	pc = np.array([0.0] * len(classes))	
 
-	'''Calculates p(c) and p(w|c) vector for each class'''
+	'''Builds p(c) and p(w|c) vectors for each class'''
 	for recipe in trainrecipes:
+		classIndex = classes.index(recipe['cuisine'])
 		#pc
-		pc[classes.index(recipe['cuisine'])] += 1
+		pc[classIndex] += 1
 		#pwc
-		recipeFeatVector, nfTokens = createFeatVector(vocabulary,recipe['ingredients'])
-		numeratorPwc[classes.index(recipe['cuisine'])] += recipeFeatVector
+		recipeFeatVector, numberOfNotFoundTokens = createFeatVector(vocabulary,recipe['ingredients'])
+		numeratorPwc[classIndex] += recipeFeatVector
 		denominatorPwc += recipeFeatVector
 	
-	# calculates each class probability
+	'''Calculates pc and pwc'''	
+	#pc[]/number of classes
 	pc = pc / float(sum(pc))
-	
-	# using log to avoid underflow problem when doing multiplication
+	# calculates pwc using log to avoid underflow problem
 	pwc = np.log(numeratorPwc / denominatorPwc)
+
 	return pc, pwc
 
 def classifyNB(pc, pwc, ingredFeatVector):
-	'''Calculates p(c|w) vector for each class'''
+	'''	For each class calculates p(c|w), the probability of a class c
+	    given a recipe w (represented as a feature vector) '''
 	pcw=np.array([0.0]*len(pwc))
 	for i in range(len(pcw)):
 		pcw[i] = sum(pwc[i] * ingredFeatVector) + np.log(pc[i])
-	#get max p(c|w) value 
+	
+	#get maximum p(c|w) value (array index) to define the best class for this recipe
 	classIndex = pcw.tolist().index(max(pcw))
 	return classIndex
 	

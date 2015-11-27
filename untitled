@@ -1,0 +1,48 @@
+
+Diversos métodos podem ser usados para classificação de texto:
+ -Naive Bayes, Logistic Regression, k-NN, Redes Neurais, SVM, Ensembles
+  (Charu C. Aggarwal , Cheng Xiang Zhai, Mining Text Data, Springer Publishing Company, Incorporated, 2012)
+
+- Naive Bayes tem algumas características interessantes:
+	- Boa performance e simples de implementar
+	- Bons resultados nos casos em que as caracteristicas têm a mesma importância
+
+
+•  Very good in domains with many equally important features
+Decision Trees suffer from fragmentaGon in such cases – especially if liLle data
+•  Op1mal if the independence assump1ons hold: If assumed
+independence is correct, then it is the Bayes Op1mal Classifier for problem
+
+
+
+Qual método de aprendizado indicado para um problema de classificação de texto?
+Poucos dados de treinamento: Naïve Bayes, SVM
+
+também try to apply semi-supervised training methods . This includes methods such as bootstrapping or the EM algorithm
+Very little data?
+•  Use Naïve Bayes
+•  Naïve Bayes is a “high-bias” algorithm (Ng and Jordan 2002 NIPS)
+Referência: http://nlp.stanford.edu/IR-book/html/htmledition/choosing-what-kind-of-classifier-to-use-1.html
+
+A reasonable amount of data?
+•  Perfect for all the clever classifiers •  SVM
+•  Regularized Logis1c Regression (Maxmum entropy
+
+
+http://nlp.stanford.edu/IR-book/html/htmledition/evaluation-of-text-classification-1.html
+Our conclusion from the results in Table 13.9 is that, although most researchers believe that an SVM is better than kNN and kNN better than NB, the ranking of classifiers ultimately depends on the class, the document collection, and the experimental setup. In text classification, there is always more to know than simply which machine learning algorithm was used, as we further discuss in Section 15.3 (page [*]).
+
+
+•  Regularized Logis1c Regression
+
+JUNTAR COM ANTERIOR
+Simple (“naïve”) classifica1on method based on Bayes rule 
+• Relies on very simple representa1on of document • Bag of words 
+Bag of Words assump8on: Assume posi1on doesn’t
+maLer
+•  Condi8onal Independence: Assume the feature
+probabili1es P(xi|cj) are independent given the class c
+
+http://nlp.stanford.edu/IR-book/html/htmledition/choosing-what-kind-of-classifier-to-use-1.html
+
+
